@@ -1,0 +1,113 @@
+{
+  "entities": {
+    "AllowedUser": {
+      "title": "Allowed User",
+      "description": "Whitelist of Gmail accounts permitted to log in",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Gmail address of the authorized user"
+        }
+      },
+      "required": ["email"]
+    },
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores user configuration, wallet state, and authorization status",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "number",
+          "description": "Current sheet paper trading balance"
+        },
+        "initialBalance": {
+          "type": "number",
+          "description": "The initial paper trading funds allocated"
+        },
+        "isSetup": {
+          "type": "boolean",
+          "description": "Whether the user completed Step 3 wallet initialization"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "balance", "initialBalance", "isSetup", "createdAt"]
+    },
+    "TradeHistory": {
+      "title": "Trade History",
+      "description": "Tracks all custom mock/paper trades made using the SMC Scanner setups",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "uid": {
+          "type": "string",
+          "description": "Owner UID"
+        },
+        "coinName": {
+          "type": "string"
+        },
+        "tradeType": {
+          "type": "string",
+          "enum": ["LONG", "SHORT"]
+        },
+        "result": {
+          "type": "string",
+          "enum": ["TP Hit", "SL Hit"]
+        },
+        "gainLossPct": {
+          "type": "number"
+        },
+        "entryPrice": {
+          "type": "number"
+        },
+        "exitPrice": {
+          "type": "number"
+        },
+        "strategy": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "uid",
+        "coinName",
+        "tradeType",
+        "result",
+        "gainLossPct",
+        "entryPrice",
+        "exitPrice",
+        "strategy",
+        "timestamp"
+      ]
+    }
+  },
+  "firestore": {
+    "allowed_users/{emailId}": {
+      "schema": "AllowedUser",
+      "description": "Whitelisted email checks, email ID encoded (e.g. test_at_gmail_com)"
+    },
+    "user_profiles/{uid}": {
+      "schema": "UserProfile",
+      "description": "Interactive paper trading wallet profiles"
+    },
+    "trades_history/{tradeId}": {
+      "schema": "TradeHistory",
+      "description": "Trade log ledger for visualising historical performance"
+    }
+  }
+}

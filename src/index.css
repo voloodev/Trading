@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #34CDED;
+  --color-matte-black: #070514;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Base custom styles to provide a rich frosted glass effect */
+.glass-panel {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover:hover {
+  border-color: rgba(52, 205, 237, 0.3);
+  box-shadow: 0 8px 32px rgba(52, 205, 237, 0.15);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Glow effect for high priority triggers */
+.neon-glow {
+  text-shadow: 0 0 10px rgba(52, 205, 237, 0.85);
+}
+
+.neon-border-glow {
+  box-shadow: 0 0 15px rgba(52, 205, 237, 0.2);
+}
+
+/* Slowly drifting ambient background blobs */
+@keyframes drift {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+    filter: blur(100px);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.2);
+    filter: blur(120px);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.85);
+    filter: blur(80px);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+    filter: blur(100px);
+  }
+}
+
+@keyframes drift-reverse {
+  0% {
+    transform: translate(0px, 0px) scale(1.1);
+    filter: blur(90px);
+  }
+  50% {
+    transform: translate(-40px, 40px) scale(0.9);
+    filter: blur(110px);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1.1);
+    filter: blur(90px);
+  }
+}
+
+.ambient-blob-1 {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(52, 205, 237, 0.25) 0%, rgba(29, 78, 216, 0.08) 60%, rgba(0,0,0,0) 100%);
+  animation: drift 18s infinite ease-in-out alternate;
+  pointer-events: none;
+}
+
+.ambient-blob-2 {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(29, 78, 216, 0.2) 0%, rgba(147, 51, 234, 0.05) 50%, rgba(0,0,0,0) 100%);
+  animation: drift-reverse 15s infinite ease-in-out alternate;
+  pointer-events: none;
+}
+
+/* Custom scrollbars for the high-end matrix panels */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(52, 205, 237, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(52, 205, 237, 0.65);
+}
+

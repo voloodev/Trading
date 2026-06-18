@@ -1,0 +1,6 @@
+{
+  "name": "Gen Z Trades",
+  "description": "Premium multi-strategy market data scanner detecting Smart Money Concepts (SMC), ICT sweeps, Elliott corrective waves, and retail chart patterns with high-win-rate probabilities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (Default Deny Catch-All)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Is valid base identifiers
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-\\.\\@\\+]+$');
+    }
+
+    // Is current user authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Allowed Users collection - readable by any authenticated user for checkup
+    match /allowed_users/{emailId} {
+      allow read: if isSignedIn() && isValidId(emailId);
+      allow write: if false; // System-only write (manually seeded in setup)
+    }
+
+    // Helper functions for User Profiles
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'email', 'balance', 'initialBalance', 'isSetup', 'createdAt'])
+        && data.keys().size() == 6
+        && data.uid is string
+        && data.email is string
+        && data.balance is number
+        && data.initialBalance is number
+        && data.isSetup is bool
+        && data.createdAt is timestamp;
+    }
+
+    // User profiles - read and written only by the owner
+    match /user_profiles/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid && isValidId(uid);
+      allow create: if isSignedIn() && request.auth.uid == uid && isValidId(uid) && isValidUserProfile(request.resource.data) && request.resource.data.createdAt == request.time;
+      allow update: if isSignedIn() && request.auth.uid == uid && isValidId(uid) && isValidUserProfile(request.resource.data);
+      allow delete: if false; // Profiles cannot be deleted from web client
+    }
+
+    // Helper functions for Trade History entries
+    function isValidTradeHistory(data) {
+      return data.keys().hasAll(['id', 'uid', 'coinName', 'tradeType', 'result', 'gainLossPct', 'entryPrice', 'exitPrice', 'strategy', 'timestamp'])
+        && data.keys().size() == 10
+        && data.id is string
+        && data.uid is string
+        && data.coinName is string
+        && data.tradeType is string && (data.tradeType == 'LONG' || data.tradeType == 'SHORT')
+        && data.result is string && (data.result == 'TP Hit' || data.result == 'SL Hit')
+        && data.gainLossPct is number
+        && data.entryPrice is number
+        && data.exitPrice is number
+        && data.strategy is string
+        && data.timestamp is timestamp;
+    }
+
+    // Trade History ledger - read and write owned trade logs
+    match /trades_history/{tradeId} {
+      allow read: if isSignedIn() && resource.data.uid == request.auth.uid && isValidId(tradeId);
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid && isValidId(tradeId) && isValidTradeHistory(request.resource.data) && request.resource.data.timestamp == request.time;
+      allow update: if false; // Ledger is append-only for strict historical accuracy
+      allow delete: if false; // Records are immutable
+    }
+  }
+}
